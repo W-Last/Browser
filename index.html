@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Web Browser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #navbar {
+            display: flex;
+            padding: 10px;
+            background-color: #f2f2f2;
+        }
+        #url {
+            flex: 1;
+            padding: 8px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #iframe {
+            flex: 1;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="navbar">
+    <input type="text" id="url" placeholder="Enter URL (e.g., https://example.com)">
+    <button id="goButton">Go</button>
+    <button id="backButton">Back</button>
+    <button id="forwardButton">Forward</button>
+</div>
+<iframe id="iframe" src="about:blank"></iframe>
+
+<script>
+    const urlInput = document.getElementById('url');
+    const iframe = document.getElementById('iframe');
+    const goButton = document.getElementById('goButton');
+    const backButton = document.getElementById('backButton');
+    const forwardButton = document.getElementById('forwardButton');
+
+    let history = [];
+    let historyIndex = -1;
+
+    goButton.addEventListener('click', () => {
+        const url = urlInput.value;
+        if (url) {
+            if (!/^https?:\/\//i.test(url)) {
+                urlInput.value = 'http://' + url; // Default to http if no protocol is provided
+            }
+            iframe.src = urlInput.value;
+            updateHistory(urlInput.value);
+        }
+    });
+
+    backButton.addEventListener('click', () => {
+        if (historyIndex > 0) {
+            historyIndex--;
+            iframe.src = history[historyIndex];
+            urlInput.value = history[historyIndex];
+        }
+    });
+
+    forwardButton.addEventListener('click', () => {
+        if (historyIndex < history.length - 1) {
+            historyIndex++;
+            iframe.src = history[historyIndex];
+            urlInput.value = history[historyIndex];
+        }
+    });
+
+    function updateHistory(url) {
+        if (historyIndex < history.length - 1) {
+            history = history.slice(0, historyIndex + 1); // Remove forward history
+        }
+        history.push(url);
+        historyIndex++;
+    }
+</script>
+
+</body>
+</html>
